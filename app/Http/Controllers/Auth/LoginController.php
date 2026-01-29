@@ -141,24 +141,29 @@ class LoginController extends Controller
 
     protected function preventShellInjection(Request $request)
     {
+        $safeFields = ['_token', '_method', 'remember-me'];
+        
         $dangerousPatterns = [
             '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',
-            '/[;&|`$(){}[\]<>]/',
-            '/\b(exec|system|shell_exec|passthru|eval|base64_decode|file_get_contents|fopen|fwrite|include|require)\b/i',
-            '/\b(cmd|powershell|bash|sh|zsh|fish)\b/i',
-            '/\b(rm|del|format|fdisk|mkfs)\b/i',
-            '/\b(wget|curl|nc|netcat|telnet|ssh|ftp)\b/i',
-            '/\b(python|perl|ruby|php|node|java)\b/i',
-            '/\\\\/i',
-            '/\.\.\//',
-            '/\/etc\//',
-            '/\/bin\//',
-            '/\/usr\//',
-            '/\/var\//',
-            '/\/tmp\//',
-            '/\/proc\//',
-            '/\/dev\//',
-            '/\/sys\//',
+            '/\b(exec|system|shell_exec|passthru|eval|base64_decode|file_get_contents|fopen|fwrite|include|require)\s*\(/i',
+            '/\b(cmd|powershell|bash|sh|zsh|fish)\s+/i',
+            '/\b(rm|del|format|fdisk|mkfs)\s+/i',
+            '/\b(wget|curl|nc|netcat|telnet|ssh|ftp)\s+/i',
+            '/\b(python|perl|ruby|php|node|java)\s+/i',
+            '/\.\.\//i',
+            '/\/etc\//i',
+            '/\/bin\//i',
+            '/\/usr\//i',
+            '/\/var\//i',
+            '/\/tmp\//i',
+            '/\/proc\//i',
+            '/\/dev\//i',
+            '/\/sys\//i',
+            '/;\s*(rm|del|format|exec|system|shell_exec)/i',
+            '/\|\s*(rm|del|format|exec|system|shell_exec)/i',
+            '/&&\s*(rm|del|format|exec|system|shell_exec)/i',
+            '/`[^`]*`/i',
+            '/\$\([^)]*\)/i',
         ];
 
         $inputs = [
@@ -167,7 +172,7 @@ class LoginController extends Controller
         ];
 
         foreach ($inputs as $field => $value) {
-            if (is_string($value)) {
+            if (is_string($value) && !in_array($field, $safeFields)) {
                 foreach ($dangerousPatterns as $pattern) {
                     if (preg_match($pattern, $value)) {
                         Log::channel('auth')->critical('Shell injection attempt detected', [
@@ -189,18 +194,18 @@ class LoginController extends Controller
 
         $userAgent = $request->userAgent();
         $suspiciousAgents = [
-            '/curl/i',
-            '/wget/i',
-            '/python/i',
+            '/curl\/[0-9]/i',
+            '/wget\/[0-9]/i',
+            '/python-requests/i',
             '/perl/i',
             '/ruby/i',
-            '/java/i',
-            '/node/i',
-            '/php/i',
-            '/bot/i',
-            '/crawler/i',
-            '/spider/i',
-            '/scraper/i',
+            '/java\/[0-9]/i',
+            '/node\/[0-9]/i',
+            '/php\/[0-9]/i',
+            '/sqlmap/i',
+            '/nikto/i',
+            '/nmap/i',
+            '/masscan/i',
         ];
 
         foreach ($suspiciousAgents as $pattern) {
@@ -221,6 +226,24 @@ class LoginController extends Controller
     protected function throttleKey(Request $request)
     {
         return strtolower($request->input('email')) . '|' . $request->ip();
+    }
+
+    public function clearRateLimit(Request $request)
+    {
+        if (config('app.env') === 'local' || config('app.debug')) {
+            $key = $this->throttleKey($request);
+            RateLimiter::clear($key);
+            
+            Log::channel('auth')->info('Rate limit cleared', [
+                'key' => $key,
+                'ip' => $request->ip(),
+                'timestamp' => now(),
+            ]);
+            
+            return response()->json(['message' => 'Rate limit cleared']);
+        }
+        
+        return response()->json(['message' => 'Not allowed'], 403);
     }
 
     public function logout(Request $request)

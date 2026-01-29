@@ -25,6 +25,7 @@ Route::group(['prefix' => 'portal', 'controller' => LoginController::class], fun
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'login')->name('portal.login.submit');
     Route::post('/logout', 'logout')->name('portal.logout');
+    Route::post('/clear-rate-limit', 'clearRateLimit')->name('portal.clear.rate.limit');
 });
 
 # Portal
