@@ -35,6 +35,8 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        $this->preventShellInjection($request);
+
         Log::channel('auth')->info('Login attempt started', [
             'email' => $request->input('email'),
             'ip' => $request->ip(),
@@ -134,6 +136,85 @@ class LoginController extends Controller
             return back()
                 ->with('warning', "Terlalu banyak percobaan login. Tunggu {$minutes} menit sebelum mencoba lagi.")
                 ->onlyInput('email');
+        }
+    }
+
+    protected function preventShellInjection(Request $request)
+    {
+        $dangerousPatterns = [
+            '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',
+            '/[;&|`$(){}[\]<>]/',
+            '/\b(exec|system|shell_exec|passthru|eval|base64_decode|file_get_contents|fopen|fwrite|include|require)\b/i',
+            '/\b(cmd|powershell|bash|sh|zsh|fish)\b/i',
+            '/\b(rm|del|format|fdisk|mkfs)\b/i',
+            '/\b(wget|curl|nc|netcat|telnet|ssh|ftp)\b/i',
+            '/\b(python|perl|ruby|php|node|java)\b/i',
+            '/\\\\/i',
+            '/\.\.\//',
+            '/\/etc\//',
+            '/\/bin\//',
+            '/\/usr\//',
+            '/\/var\//',
+            '/\/tmp\//',
+            '/\/proc\//',
+            '/\/dev\//',
+            '/\/sys\//',
+        ];
+
+        $inputs = [
+            'email' => $request->input('email', ''),
+            'password' => $request->input('password', ''),
+        ];
+
+        foreach ($inputs as $field => $value) {
+            if (is_string($value)) {
+                foreach ($dangerousPatterns as $pattern) {
+                    if (preg_match($pattern, $value)) {
+                        Log::channel('auth')->critical('Shell injection attempt detected', [
+                            'field' => $field,
+                            'value' => $value,
+                            'pattern' => $pattern,
+                            'ip' => $request->ip(),
+                            'user_agent' => $request->userAgent(),
+                            'timestamp' => now(),
+                        ]);
+                        
+                        RateLimiter::hit($this->throttleKey($request), 3600);
+                        
+                        abort(403, 'Forbidden');
+                    }
+                }
+            }
+        }
+
+        $userAgent = $request->userAgent();
+        $suspiciousAgents = [
+            '/curl/i',
+            '/wget/i',
+            '/python/i',
+            '/perl/i',
+            '/ruby/i',
+            '/java/i',
+            '/node/i',
+            '/php/i',
+            '/bot/i',
+            '/crawler/i',
+            '/spider/i',
+            '/scraper/i',
+        ];
+
+        foreach ($suspiciousAgents as $pattern) {
+            if (preg_match($pattern, $userAgent)) {
+                Log::channel('auth')->warning('Suspicious user agent detected', [
+                    'user_agent' => $userAgent,
+                    'ip' => $request->ip(),
+                    'timestamp' => now(),
+                ]);
+                
+                RateLimiter::hit($this->throttleKey($request), 1800);
+                
+                abort(403, 'Forbidden');
+            }
         }
     }
 

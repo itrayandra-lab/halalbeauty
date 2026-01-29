@@ -1,5 +1,97 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "{{ $video->title }}",
+    "description": "{{ Str::limit(strip_tags($video->description ?? $video->title), 160) }}",
+    "thumbnailUrl": "{{ $video->thumbnail ? getFile($video->thumbnail) : '' }}",
+    "uploadDate": "{{ $video->created_at->toISOString() }}",
+    "duration": "PT{{ $video->duration ?? '0' }}S",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "contentUrl": "{{ $video->video_url ?? request()->url() }}",
+    "embedUrl": "{{ $video->embed_url ?? request()->url() }}"
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ $video->title }} - Video",
+    "description": "{{ Str::limit(strip_tags($video->description ?? $video->title), 160) }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ $video->created_at->toISOString() }}",
+    "dateModified": "{{ $video->updated_at->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Video",
+                "item": "{{ url('/video') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ $video->title }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa isi dari video {{ $video->title }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ Str::limit(strip_tags($video->description ?? $video->title), 200) }}"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Kapan video ini dipublikasikan?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Video ini dipublikasikan pada {{ $video->created_at->format('d M Y') }}."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('content')
     <div class="fixed inset-0 z-[10000] bg-[#0f0f0f] text-white font-sans mt-[64px] flex overflow-hidden">
 

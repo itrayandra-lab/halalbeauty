@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Album - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Kumpulan album foto dan galeri gambar dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman album berisi kumpulan foto dan galeri gambar dari berbagai acara dan momen penting."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Album",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa saja yang ada di album foto?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Album foto berisi dokumentasi berbagai acara, kegiatan, dan momen penting yang telah diabadikan dalam bentuk galeri gambar."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Bagaimana cara melihat foto dalam album?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Klik pada album yang ingin dilihat untuk membuka galeri foto dan menjelajahi koleksi gambar yang tersedia."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Halaman',

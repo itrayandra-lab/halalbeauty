@@ -1,5 +1,79 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Tag: {{ $tag->name }} - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Kumpulan artikel dengan tag {{ $tag->name }} dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ $tag->created_at->toISOString() }}",
+    "dateModified": "{{ $tag->updated_at->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman tag {{ $tag->name }} berisi kumpulan artikel yang memiliki tag atau topik terkait {{ $tag->name }}."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Tag",
+                "item": "{{ url('/tag') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ $tag->name }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa itu tag {{ $tag->name }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Tag {{ $tag->name }} adalah label yang digunakan untuk mengelompokkan artikel dengan topik atau tema yang serupa, memudahkan pembaca menemukan konten yang relevan."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Bagaimana cara menemukan artikel dengan tag tertentu?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Anda dapat mengklik tag yang tersedia di setiap artikel atau menggunakan halaman tag untuk menjelajahi artikel berdasarkan topik yang diminati."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Tag',

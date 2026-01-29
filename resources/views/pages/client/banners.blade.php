@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Banner - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Kumpulan banner dan promosi dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman banner berisi kumpulan promosi, pengumuman, dan konten visual penting."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Banner",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa isi dari halaman banner?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Halaman banner berisi kumpulan promosi, pengumuman penting, dan konten visual yang relevan untuk pembaca."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Bagaimana cara melihat detail banner?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Klik pada banner yang ingin dilihat untuk membuka halaman detail dengan informasi lengkap."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Halaman',

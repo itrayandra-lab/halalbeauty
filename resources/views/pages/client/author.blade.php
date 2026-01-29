@@ -1,5 +1,85 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "name": "{{ $author->name }} - Profil Penulis",
+    "description": "Profil penulis {{ $author->name }} dan kumpulan artikel yang telah ditulis",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ $author->created_at->toISOString() }}",
+    "dateModified": "{{ $author->updated_at->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainEntity": {
+        "@type": "Person",
+        "name": "{{ $author->name }}",
+        "image": "{{ $author->image ? getFile($author->image) : asset('dist/images/users/avatar-1.jpg') }}",
+        "jobTitle": "Penulis",
+        "worksFor": {
+            "@type": "Organization",
+            "name": "{{ $meta->web_name ?? 'Portal Berita' }}"
+        }
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Penulis",
+                "item": "{{ url('/author') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ $author->name }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Siapa {{ $author->name }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ $author->name }} adalah penulis di {{ $meta->web_name ?? 'Portal Berita' }} yang telah menulis berbagai artikel berkualitas."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Artikel apa saja yang telah ditulis {{ $author->name }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ $author->name }} telah menulis artikel dari berbagai kategori dan topik. Anda dapat melihat daftar lengkap artikel di halaman profil ini."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Author',

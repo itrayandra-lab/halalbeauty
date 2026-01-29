@@ -1,5 +1,58 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+@php
+    use App\Helpers\StructuredDataHelper;
+    $articleSchema = StructuredDataHelper::generateArticleSchema($post, $post->createdBy);
+    echo json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+@endphp
+</script>
+
+@php
+    $faqs = StructuredDataHelper::extractFAQFromContent($content);
+    if (!empty($faqs)) {
+        $faqSchema = StructuredDataHelper::generateFAQSchema($faqs);
+        echo '<script type="application/ld+json">' . json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+    }
+@endphp
+
+@php
+    $steps = StructuredDataHelper::extractHowToFromContent($content);
+    if (!empty($steps)) {
+        $howToSchema = StructuredDataHelper::generateHowToSchema($post->title, strip_tags(substr($content, 0, 160)), $steps);
+        echo '<script type="application/ld+json">' . json_encode($howToSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+    }
+@endphp
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Beranda",
+            "item": "{{ url('/') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "{{ $post->category->name }}",
+            "item": "{{ url('/' . $post->category->slug) }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ $post->title }}",
+            "item": "{{ request()->url() }}"
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('content')
     <div class="relative isolate -mt-8 overflow-hidden bg-white px-2 py-10 lg:py-20 lg:overflow-visible lg:px-0">
         <div class="absolute inset-0 -z-10 overflow-hidden">

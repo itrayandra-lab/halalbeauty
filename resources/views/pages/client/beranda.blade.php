@@ -1,4 +1,66 @@
 @extends('layouts.client.app')
+
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ $meta->web_name ?? 'Portal Berita' }} - Beranda",
+    "description": "{{ $meta->meta_description ?? 'Portal berita terkini dan terpercaya' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman utama portal berita dengan berita terkini, trending topics, dan informasi terpercaya dari berbagai kategori."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa yang bisa ditemukan di {{ $meta->web_name ?? 'Portal Berita' }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Portal berita ini menyediakan berita terkini, artikel informatif, dan konten berkualitas dari berbagai kategori seperti politik, ekonomi, teknologi, olahraga, dan lifestyle."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Seberapa sering konten diperbarui?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Konten diperbarui secara berkala setiap hari untuk memastikan pembaca mendapatkan informasi terbaru dan terpercaya."
+            }
+        }
+    ]
+}
+</script>
+@endpush
 @push('styles')
     <style>
         .carousel-slide {

@@ -31,6 +31,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="{{ getFile($meta->favicon) }}" type="image/x-icon">
 
+    @php
+        use App\Helpers\StructuredDataHelper;
+        $websiteSchema = StructuredDataHelper::generateWebsiteSchema();
+        $organizationSchema = StructuredDataHelper::generateOrganizationSchema();
+    @endphp
+    
+    {!! StructuredDataHelper::renderJsonLd($websiteSchema) !!}
+    {!! StructuredDataHelper::renderJsonLd($organizationSchema) !!}
+    
+    @stack('structured-data')
+    
+    @yield('head')
+
     @vite('resources/css/app.css')
     @vite('resources/css/styles.css')
     @vite('resources/js/app.js')

@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Informasi - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Halaman informasi dan pengumuman penting dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman informasi berisi pengumuman, kebijakan, dan informasi penting lainnya."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Informasi",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Informasi apa saja yang tersedia?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Tersedia berbagai informasi penting seperti pengumuman, kebijakan, panduan, dan informasi lainnya yang relevan untuk pembaca."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Seberapa sering informasi diperbarui?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Informasi diperbarui secara berkala sesuai kebutuhan untuk memastikan pembaca mendapatkan informasi yang akurat dan terkini."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Halaman',

@@ -33,7 +33,8 @@
             "app/Helpers/MenuHelper.php",
             "app/Helpers/SlugHelper.php",
             "app/Helpers/GetFileHelper.php",
-            "app/Helpers/FileHelper.php"
+            "app/Helpers/FileHelper.php",
+            "app/Helpers/StructuredDataHelper.php"
         ]
     },
     "autoload-dev": {

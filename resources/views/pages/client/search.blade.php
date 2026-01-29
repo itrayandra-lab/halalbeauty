@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SearchResultsPage",
+    "name": "Hasil Pencarian: {{ request('q') }} - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Hasil pencarian untuk '{{ request('q') }}' di {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman hasil pencarian untuk kata kunci '{{ request('q') }}' menampilkan artikel dan berita yang relevan."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Pencarian",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Bagaimana cara mencari artikel di situs ini?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Gunakan kotak pencarian di bagian atas halaman dan masukkan kata kunci yang ingin Anda cari. Sistem akan menampilkan artikel yang relevan dengan kata kunci tersebut."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Apakah pencarian mencakup semua konten?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Ya, pencarian mencakup judul artikel, konten, dan tag untuk memberikan hasil yang komprehensif dan relevan."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     <section class="shadow-sm shadow-gray-50"
         style="background: radial-gradient(circle, transparent 20%, #ffffff 20%, #ffffff 80%, transparent 80%, transparent) 0% 0% / 64px 64px, radial-gradient(circle, transparent 20%, #ffffff 20%, #ffffff 80%, transparent 80%, transparent) 32px 32px / 64px 64px, linear-gradient(#f2f2f2 2px, transparent 2px) 0px -1px / 32px 32px, linear-gradient(90deg, #f2f2f2 2px, #ffffff 2px) -1px 0px / 32px 32px #ffffff; background-size: 64px 64px, 64px 64px, 32px 32px, 32px 32px; background-color: #ffffff;">

@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Video - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Kumpulan video informatif dan menarik dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman video berisi kumpulan konten video informatif dan menarik dari berbagai topik."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Video",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Jenis video apa saja yang tersedia?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Tersedia berbagai jenis video informatif, berita video, tutorial, dan konten multimedia lainnya yang relevan dan menarik."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Bagaimana cara menonton video?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Klik pada thumbnail video yang ingin ditonton untuk membuka halaman detail video dan mulai memutar konten."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Halaman',

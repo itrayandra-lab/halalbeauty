@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ $category->name }} - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Kumpulan berita dan artikel terkait {{ $category->name }} dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ $category->created_at->toISOString() }}",
+    "dateModified": "{{ $category->updated_at->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman kategori {{ $category->name }} berisi kumpulan berita dan artikel terkait topik {{ $category->name }}."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "{{ $category->name }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa saja konten yang tersedia di kategori {{ $category->name }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Kategori {{ $category->name }} berisi berita terkini, artikel mendalam, dan informasi terpercaya seputar topik {{ $category->name }}."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Seberapa sering konten kategori {{ $category->name }} diperbarui?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Konten kategori {{ $category->name }} diperbarui secara berkala untuk memastikan pembaca mendapatkan informasi terbaru dan relevan."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Kategori',

@@ -1,5 +1,79 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ $info->title }}",
+    "description": "{{ Str::limit(strip_tags($info->content), 160) }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ $info->created_at->toISOString() }}",
+    "dateModified": "{{ $info->updated_at->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "{{ Str::limit(strip_tags($info->content), 500) }}"
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Informasi",
+                "item": "{{ url('/info') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ $info->title }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa isi dari {{ $info->title }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ Str::limit(strip_tags($info->content), 200) }}"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Kapan informasi ini terakhir diperbarui?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Informasi ini terakhir diperbarui pada {{ $info->updated_at->format('d M Y') }} untuk memastikan akurasi dan relevansi."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('content')
     <div class="relative isolate -mt-8 overflow-hidden bg-white px-2 py-10 lg:py-20 lg:overflow-visible lg:px-0">
         <div class="absolute inset-0 -z-10 overflow-hidden">

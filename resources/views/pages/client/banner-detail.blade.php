@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ $banner->title }}",
+    "description": "{{ Str::limit(strip_tags($banner->description ?? $banner->title), 160) }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ $banner->created_at->toISOString() }}",
+    "dateModified": "{{ $banner->updated_at->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "{{ Str::limit(strip_tags($banner->description ?? $banner->title), 500) }}"
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "{{ $banner->title }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Apa isi dari {{ $banner->title }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ Str::limit(strip_tags($banner->description ?? $banner->title), 200) }}"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Kapan konten ini dipublikasikan?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Konten ini dipublikasikan pada {{ $banner->created_at->format('d M Y') }}."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('content')
     <div class="relative isolate -mt-8 overflow-hidden bg-white px-2 py-10 lg:py-20 lg:overflow-visible lg:px-0">
         <div class="absolute inset-0 -z-10 overflow-hidden">

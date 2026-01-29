@@ -1,5 +1,73 @@
 @extends('layouts.client.app')
 
+@push('structured-data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ $type ?? 'Semua Berita' }} - {{ $meta->web_name ?? 'Portal Berita' }}",
+    "description": "Kumpulan berita terkini dan artikel informatif dari {{ $meta->web_name ?? 'Portal Berita' }}",
+    "url": "{{ request()->url() }}",
+    "datePublished": "{{ now()->toISOString() }}",
+    "dateModified": "{{ now()->toISOString() }}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ $meta->web_name ?? 'Portal Berita' }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $meta->logo ? getFile($meta->logo) : '' }}"
+        }
+    },
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "text": "Halaman daftar berita berisi kumpulan artikel terkini dari berbagai kategori dan topik."
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "{{ $type ?? 'Berita' }}",
+                "item": "{{ request()->url() }}"
+            }
+        ]
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Bagaimana cara menemukan berita terbaru?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Berita terbaru ditampilkan berdasarkan tanggal publikasi terkini. Anda dapat menjelajahi berbagai kategori untuk menemukan topik yang diminati."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Apakah semua berita sudah terverifikasi?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Ya, semua berita telah melalui proses editorial dan verifikasi untuk memastikan akurasi dan kredibilitas informasi."
+            }
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('header')
     @include('widget.client.header-section', [
         'segment' => 'Berita',
