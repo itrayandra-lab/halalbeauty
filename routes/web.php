@@ -34,7 +34,7 @@ Route::group(['prefix' => 'portal', 'middleware' => ['auth']], function () {
     Route::get('home', [HomeController::class, 'index'])->name('admin.dashboard');
 
     # Image Handler
-    Route::group(['prefix' => 'image', 'controller' => UploadImageEditor::class], function () {
+    Route::group(['prefix' => 'image', 'controller' => UploadImageEditor::class, 'middleware' => ['auth', 'throttle:20,1']], function () {
         Route::post('upload-image', 'uploadImage')->name('uploadImage');
         Route::post('delete-image', 'deleteImage')->name('deleteImage');
     });

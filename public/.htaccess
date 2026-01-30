@@ -1,9 +1,34 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
+        Options -MultiViews -Indexes -ExecCGI
     </IfModule>
 
     RewriteEngine On
+
+    # Block access to sensitive files
+    <FilesMatch "\.(env|log|sql|bak|backup|old|tmp|temp|cache|ini|conf)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    # Block PHP execution in upload directories
+    <Directory "assets/">
+        <FilesMatch "\.php$">
+            Order allow,deny
+            Deny from all
+        </FilesMatch>
+    </Directory>
+
+    # Block directory traversal
+    RewriteCond %{QUERY_STRING} \.\./
+    RewriteRule ^(.*)$ - [F,L]
+
+    RewriteCond %{QUERY_STRING} \.\.\%2F
+    RewriteRule ^(.*)$ - [F,L]
+
+    # Block shell injection
+    RewriteCond %{QUERY_STRING} (exec|system|shell_exec|passthru|eval|base64_decode|file_get_contents|fopen|fwrite|curl|wget) [NC]
+    RewriteRule ^(.*)$ - [F,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
