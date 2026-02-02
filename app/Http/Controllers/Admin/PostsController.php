@@ -97,6 +97,8 @@ class PostsController extends Controller
 
     public function store(Request $request)
     {
+        Log::info("Memulai proses simpan post: " . $request->title);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
@@ -111,76 +113,82 @@ class PostsController extends Controller
             'image.*' => 'nullable|image|max:2048',
         ]);
 
-        $mainImagePath = null;
-        if ($request->hasFile('featured_image')) {
-            try {
+        try {
+            $mainImagePath = null;
+            if ($request->hasFile('featured_image')) {
                 $mainImagePath = FileHelper::saveFile($request->file('featured_image'), 'posts', Str::slug($request->title) . '-' . time());
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal menyimpan gambar utama: ' . $e->getMessage(),
-                ], 422);
             }
-        }
 
-        $post = Posts::create([
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'content' => $request->content,
-            'image' => $mainImagePath,
-            'category_id' => $request->category_id,
-            'tags' => $request->tags ? json_encode($request->tags) : null,
-            'status' => $request->status,
-            'published_at' => $request->published_at,
-            'created_by' => Auth::check() ? Auth::user()->id : 1,
-            'counter' => 0,
-        ]);
+            $post = Posts::create([
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'content' => $request->content,
+                'image' => $mainImagePath,
+                'category_id' => $request->category_id,
+                'tags' => $request->tags ? json_encode($request->tags) : null,
+                'status' => $request->status,
+                'published_at' => $request->published_at,
+                'created_by' => Auth::check() ? Auth::user()->id : 1,
+                'counter' => 0,
+            ]);
 
-        $domainConfig = ShareDomain::where('status', 'active')
-            ->get()
-            ->keyBy('domain_name');
+            Log::info("Post berhasil disimpan ke database dengan ID: {$post->id}");
 
-        if ($request->has('domains') && is_array($request->domains)) {
-            $categoryName = $request->category_id ? PostCategory::find($request->category_id)->name : null;
-            
-            foreach ($request->domains as $domainName) {
-                if (!isset($domainConfig[$domainName])) {
-                    continue;
+            $domainConfig = ShareDomain::where('status', 'active')
+                ->get()
+                ->keyBy('domain_name');
+
+            if ($request->has('domains') && is_array($request->domains)) {
+                $categoryName = $request->category_id ? PostCategory::find($request->category_id)->name : null;
+                $distributeCount = 0;
+
+                foreach ($request->domains as $domainName) {
+                    if (!isset($domainConfig[$domainName])) {
+                        continue;
+                    }
+
+                    $config = $domainConfig[$domainName];
+                    $webhookUrl = $config->webhook_url;
+                    $apiKey = $config->api_key;
+                    $domainKey = str_replace('.', '_', $domainName);
+                    $finalImageUrl = $mainImagePath ? asset($mainImagePath) : null;
+
+                    if ($request->hasFile("image.{$domainKey}")) {
+                        $customImage = FileHelper::saveFile($request->file("image.{$domainKey}"), 'posts/domains', Str::slug($request->title) . '-' . $domainKey);
+                        $finalImageUrl = asset($customImage);
+                    }
+
+                    $domainPublishedAt = $request->input("domain_published_at.{$domainKey}") ?? $request->published_at;
+
+                    $metaData = [
+                        'session_id' => 'sess-' . $post->id . '-' . Str::random(6),
+                        'original_title' => $request->title,
+                        'original_content' => $request->content,
+                        'image' => $finalImageUrl,
+                        'tags' => $request->tags ?? [],
+                        'category' => $categoryName,
+                        'published_at' => $domainPublishedAt
+                    ];
+
+                    DistributePostJob::dispatch($webhookUrl, $domainName, $apiKey, $metaData);
+                    $distributeCount++;
                 }
 
-                $config = $domainConfig[$domainName];
-                $webhookUrl = $config->webhook_url;
-                $apiKey = $config->api_key;
-
-                $domainKey = str_replace('.', '_', $domainName);
-                
-                $finalImageUrl = $mainImagePath ? asset($mainImagePath) : null;
-
-                if ($request->hasFile("image.{$domainKey}")) {
-                    $customImage = FileHelper::saveFile($request->file("image.{$domainKey}"), 'posts/domains', Str::slug($request->title) . '-' . $domainKey);
-                    $finalImageUrl = asset($customImage);
-                }
-
-                $domainPublishedAt = $request->input("domain_published_at.{$domainKey}") ?? $request->published_at;
-
-                $metaData = [
-                    'session_id' => 'sess-' . $post->id . '-' . Str::random(6),
-                    'original_title' => $request->title,
-                    'original_content' => $request->content,
-                    'image' => $finalImageUrl,
-                    'tags' => $request->tags ?? [],
-                    'category' => $categoryName,
-                    'published_at' => $domainPublishedAt
-                ];
-
-                DistributePostJob::dispatch($webhookUrl, $domainName, $apiKey, $metaData);
+                Log::info("Berhasil mengirim {$distributeCount} post ke antrean distribusi domain.");
             }
-        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post saved and processing started.',
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Post saved and processing started.',
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Kegagalan sistem pada store post: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function edit($id)
