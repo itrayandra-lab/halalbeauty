@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\ShareDomain;
 use App\Models\WebIdentity;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 use Yajra\DataTables\Facades\DataTables;
 
@@ -99,18 +97,8 @@ class PostsController extends Controller
 
     public function store(Request $request)
     {
-        // Debug logging
-        Log::info('Store request received', [
-            'has_featured_image' => $request->hasFile('featured_image'),
-            'featured_image_info' => $request->hasFile('featured_image') ? [
-                'name' => $request->file('featured_image')->getClientOriginalName(),
-                'size' => $request->file('featured_image')->getSize(),
-                'mime' => $request->file('featured_image')->getMimeType()
-            ] : null,
-            'title' => $request->title
-        ]);
-
-        $validated = $request->validate([
+        Log::info("message", $request->all());
+        $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
             'category_id' => 'nullable|exists:post_categories,id',
@@ -126,19 +114,14 @@ class PostsController extends Controller
 
         $mainImagePath = null;
         if ($request->hasFile('featured_image')) {
-            Log::info('Processing featured image upload');
             try {
                 $mainImagePath = FileHelper::saveFile($request->file('featured_image'), 'posts', Str::slug($request->title) . '-' . time());
-                Log::info('Featured image saved successfully', ['path' => $mainImagePath]);
             } catch (\Exception $e) {
-                Log::error('Failed to save featured image', ['error' => $e->getMessage()]);
                 return response()->json([
                     'success' => false,
                     'message' => 'Gagal menyimpan gambar utama: ' . $e->getMessage(),
                 ], 422);
             }
-        } else {
-            Log::info('No featured image uploaded');
         }
 
         $post = Posts::create([
@@ -152,11 +135,6 @@ class PostsController extends Controller
             'published_at' => $request->published_at,
             'created_by' => Auth::check() ? Auth::user()->id : 1,
             'counter' => 0,
-        ]);
-
-        Log::info('Post created successfully', [
-            'post_id' => $post->id,
-            'image_path' => $post->image
         ]);
 
         $domainConfig = ShareDomain::where('status', 'active')

@@ -76,41 +76,50 @@ class SecurityMiddleware
     
     private function checkSuspiciousFiles(Request $request)
     {
-        if ($request->hasFile('file') || $request->hasFile('image')) {
-            $files = array_merge(
-                $request->file('file') ? [$request->file('file')] : [],
-                $request->file('image') ? [$request->file('image')] : []
-            );
-            
-            foreach ($files as $file) {
-                if ($file) {
-                    $extension = strtolower($file->getClientOriginalExtension());
-                    $filename = $file->getClientOriginalName();
-                    
-                    $dangerousExtensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'phar', 'exe', 'sh', 'bat', 'cmd', 'com', 'scr', 'vbs', 'js', 'jar', 'pl', 'py', 'rb'];
-                    
-                    if (in_array($extension, $dangerousExtensions)) {
-                        Log::channel('security')->critical('Dangerous file upload attempt', [
-                            'filename' => $filename,
-                            'extension' => $extension,
-                            'ip' => $request->ip(),
-                            'user_agent' => $request->userAgent(),
-                            'timestamp' => now(),
-                        ]);
-                        
-                        abort(403, 'Dangerous file type detected');
+        $allFiles = [];
+        
+        foreach ($request->allFiles() as $key => $files) {
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    if ($file) {
+                        $allFiles[] = $file;
                     }
+                }
+            } else {
+                if ($files) {
+                    $allFiles[] = $files;
+                }
+            }
+        }
+        
+        foreach ($allFiles as $file) {
+            if ($file && method_exists($file, 'getClientOriginalExtension')) {
+                $extension = strtolower($file->getClientOriginalExtension());
+                $filename = $file->getClientOriginalName();
+                
+                $dangerousExtensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'phar', 'exe', 'sh', 'bat', 'cmd', 'com', 'scr', 'vbs', 'js', 'jar', 'pl', 'py', 'rb'];
+                
+                if (in_array($extension, $dangerousExtensions)) {
+                    Log::channel('security')->critical('Dangerous file upload attempt', [
+                        'filename' => $filename,
+                        'extension' => $extension,
+                        'ip' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                        'timestamp' => now(),
+                    ]);
                     
-                    if (preg_match('/\.(htaccess|htpasswd|ini|conf|config)$/i', $filename)) {
-                        Log::channel('security')->critical('System file upload attempt', [
-                            'filename' => $filename,
-                            'ip' => $request->ip(),
-                            'user_agent' => $request->userAgent(),
-                            'timestamp' => now(),
-                        ]);
-                        
-                        abort(403, 'System file upload detected');
-                    }
+                    abort(403, 'Dangerous file type detected');
+                }
+                
+                if (preg_match('/\.(htaccess|htpasswd|ini|conf|config)$/i', $filename)) {
+                    Log::channel('security')->critical('System file upload attempt', [
+                        'filename' => $filename,
+                        'ip' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                        'timestamp' => now(),
+                    ]);
+                    
+                    abort(403, 'System file upload detected');
                 }
             }
         }
