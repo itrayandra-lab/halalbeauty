@@ -97,7 +97,6 @@ class PostsController extends Controller
 
     public function store(Request $request)
     {
-        Log::info("message", $request->all());
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
