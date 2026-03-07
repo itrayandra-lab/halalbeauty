@@ -18,6 +18,12 @@
         
         <div id="sidebar-menu">
             <ul>
+                <li>
+                    <a href="{{ url('/') }}" class="waves-effect" target="_blank">
+                        <i class="ti-world"></i><span>Lihat Website</span>
+                    </a>
+                </li>
+
                 <!-- Menu utama untuk dashboard -->
                 <li>
                     <a href="{{ route('admin.dashboard') }}" class="waves-effect">
