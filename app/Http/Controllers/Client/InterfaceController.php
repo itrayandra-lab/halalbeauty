@@ -37,7 +37,7 @@ class InterfaceController extends Controller
             'videos'       => $this->datas->videos(10),
             'photos'       => $this->datas->photo(8),
             'tags'         => $this->datas->tags(9),
-            'categories'   => $this->datas->category(8),
+            'categories'   => PostCategory::all(),
             'ads'         => $this->datas->ads(1, ['image','gif']),
         ];
 
@@ -223,7 +223,7 @@ class InterfaceController extends Controller
         $query = Posts::where('status', 'active')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', Carbon::now())
-            ->whereJsonContains('tags', (string) $tag->id)
+            ->whereJsonContains('tags', $tag->id)
             ->latest('published_at');
 
         $searchQuery = request()->input('qr');
@@ -512,6 +512,32 @@ class InterfaceController extends Controller
         ];
     
         return $classes[$tag] ?? '';
+    }
+
+    public function getPostsByCategory(Request $request) {
+        $categoryId = $request->query('category_id');
+        
+        $query = Posts::where('status', 'active')
+                    ->whereNotNull('published_at')
+                    ->where('published_at', '<=', Carbon::now())
+                    ->with(['category', 'createdBy']);
+
+        if ($categoryId && $categoryId !== 'all') {
+            $query->where('category_id', $categoryId);
+        }
+
+        $posts = $query->latest('published_at')->limit(3)->get();
+
+        $posts->map(function($post) {
+            $post->formatted_date = \Carbon\Carbon::parse($post->published_at)->locale('id')->translatedFormat('d M Y');
+            $post->category_name = $post->category->name ?? '—';
+            $post->author_name = $post->createdBy->name ?? '—';
+            $post->excerpt = implode(' ', array_slice(explode(' ', strip_tags($post->content ?? '')), 0, 40)) . '...';
+            $post->url = url(($post->category->slug ?? 'category') . '/' . $post->slug);
+            return $post;
+        });
+
+        return response()->json($posts);
     }
 
 }

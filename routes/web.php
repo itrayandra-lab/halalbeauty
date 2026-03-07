@@ -209,7 +209,7 @@ Route::group(['prefix' => '/', 'controller' => InterfaceController::class, 'midd
     Route::get('/info/{slug}', 'info_detail')->name('info_detail');
     Route::get('/page/{slug}', 'page_detail')->name('page_detail');
 
-    #sensitif route
+    Route::get('/api/posts-by-category', 'getPostsByCategory')->name('api.posts_by_category');
     Route::get('/{slug}', 'category')->name('category');
     Route::get('/{category}/{post}', 'post_detail')->name('post_detail');
 });

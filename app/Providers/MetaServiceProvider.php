@@ -12,15 +12,15 @@ class MetaServiceProvider extends ServiceProvider
 {
     private function cleanText($text)
     {
-        $text = strip_tags($text); 
+        $text = strip_tags($text);
         $text = preg_replace('/[^a-zA-Z0-9\s]/', '', $text);
-        $text = preg_replace('/\s+/', ' ', trim($text)); 
+        $text = preg_replace('/\s+/', ' ', trim($text));
         return $text;
     }
 
     public function register(): void
     {
-        //
+    //
     }
 
     public function boot(): void
@@ -36,12 +36,12 @@ class MetaServiceProvider extends ServiceProvider
                 'youtube_link' => '#',
                 'twitter_link' => '#',
                 'google_maps' => 'https://maps.google.com/',
-                'meta_title' => 'Portal Informasi kuli it tecno',
-                'meta_description' => 'Description Portal Informasi kuli it tecno',
-                'meta_keywords' => 'portal, informasi',
-                'og_image' => asset('assets/img/kuliit.png'),
+                'meta_title' => 'Portal Informasi Halal Beauty',
+                'meta_description' => 'Portal Informasi Halal Beauty - Berita terkini, artikel informatif, dan konten berkualitas.',
+                'meta_keywords' => 'portal, informasi, halal, beauty',
+                'og_image' => asset('assets/img/logo.png'),
                 'favicon' => asset('assets/img/logo_2.png'),
-                'logo' => asset('assets/img/kuliit.png'),
+                'logo' => asset('assets/img/logo.png'),
                 'status' => 'active',
                 'version' => '1.0.0',
             ];
@@ -70,7 +70,8 @@ class MetaServiceProvider extends ServiceProvider
                         $defaultMeta['version'] = $webIdentity->version ?? $defaultMeta['version'];
                     }
                 }
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
             }
 
             $data = $view->getData();
@@ -80,28 +81,33 @@ class MetaServiceProvider extends ServiceProvider
                     $defaultMeta['meta_title'] = $content->title ?? $defaultMeta['meta_title'];
                     $defaultMeta['meta_description'] = $this->cleanText($content->description ?? $content->title ?? $defaultMeta['meta_description']);
                     $defaultMeta['meta_keywords'] = $defaultMeta['meta_keywords'] . ', ' . $content->title;
-                } else {
+                }
+                else {
                     $defaultMeta['meta_title'] = $content ?? $defaultMeta['meta_title'];
                     $defaultMeta['meta_description'] = $this->cleanText($content);
                     $defaultMeta['meta_keywords'] = $defaultMeta['meta_keywords'] . ', ' . $content;
                 }
-            } elseif (isset($data['info'])) {
+            }
+            elseif (isset($data['info'])) {
                 $content = $data['info'];
                 $defaultMeta['meta_title'] = $content->title ?? $defaultMeta['meta_title'];
                 $defaultMeta['meta_description'] = $defaultMeta['meta_keywords'] ?? $this->cleanText($content->description ?? $content->title);
-                $defaultMeta['meta_keywords'] = $defaultMeta['meta_keywords'] ;
-            } elseif (isset($data['banner'])) {
+                $defaultMeta['meta_keywords'] = $defaultMeta['meta_keywords'];
+            }
+            elseif (isset($data['banner'])) {
                 $content = $data['banner'];
                 $defaultMeta['meta_title'] = $content->title ?? $defaultMeta['meta_title'];
                 $defaultMeta['meta_description'] = $this->cleanText($content->description ?? $content->title);
                 $defaultMeta['meta_keywords'] = $defaultMeta['meta_keywords'] . ', ' . $content->title;
-            } elseif (isset($data['video'])) {
+            }
+            elseif (isset($data['video'])) {
                 $content = $data['video'];
                 $defaultMeta['meta_title'] = $content->title ?? $defaultMeta['meta_title'];
                 $defaultMeta['meta_description'] = $this->cleanText($content->description ?? $content->title);
                 $defaultMeta['meta_keywords'] = $defaultMeta['meta_keywords'] . ', ' . $content->title;
                 $defaultMeta['og_image'] = $content->image ? getFile($content->image) : $defaultMeta['og_image'];
-            } elseif (isset($data['post'])) {
+            }
+            elseif (isset($data['post'])) {
                 $content = $data['post'];
                 $defaultMeta['meta_title'] = $content->title ?? $defaultMeta['meta_title'];
                 $defaultMeta['meta_description'] = $this->cleanText($content->description ?? $content->title);
@@ -109,7 +115,7 @@ class MetaServiceProvider extends ServiceProvider
                 $defaultMeta['og_image'] = $content->image ? getFile($content->image) : $defaultMeta['og_image'];
             }
 
-            $view->with('meta', (object) $defaultMeta);
+            $view->with('meta', (object)$defaultMeta);
         });
     }
 }

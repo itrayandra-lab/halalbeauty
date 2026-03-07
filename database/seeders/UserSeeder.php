@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
 
         # Definisikan roles beserta permissions-nya
         $roles = [
-            'admin' => $permissions, 
+            'admin' => $permissions,
             'editor' => [
                 'view posts', 'create posts', 'edit posts', 'delete posts',
                 'view pages', 'create pages', 'edit pages', 'delete pages',
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
                 'view information', 'create information', 'edit information',
             ],
             'user' => [
-                'view posts', 'view pages', 'view menu', 'view categories', 
+                'view posts', 'view pages', 'view menu', 'view categories',
                 'view tags', 'view album', 'view video', 'view information',
             ],
         ];
@@ -70,46 +70,46 @@ class UserSeeder extends Seeder
         # Definisikan users utama
         $users = [
             'admin' => [
-                'email' => 'admin@kuliit.com',
-                'name' => 'Admin',
+                'email' => 'admin@halalbeauty.test',
+                'name' => 'Admin Halal Beauty',
                 'slug' => 'admin',
             ],
             'editor' => [
-                'email' => 'editor@kuliit.com',
-                'name' => 'Editor',
+                'email' => 'editor@halalbeauty.test',
+                'name' => 'Editor Halal Beauty',
                 'slug' => 'editor',
             ],
             'contributor' => [
-                'email' => 'kontributor@kuliit.com',
-                'name' => 'Kontributor',
+                'email' => 'kontributor@halalbeauty.test',
+                'name' => 'Kontributor Halal Beauty',
                 'slug' => 'kontributor',
             ],
         ];
 
         # Buat users utama dan assign roles
         foreach ($users as $role => $userData) {
-            $user = User::firstOrCreate(
-                ['email' => $userData['email']],
-                [
-                    'name' => $userData['name'],
-                    'slug' => $userData['slug'],
-                    'password' => Hash::make('123'),
-                ]
+            $user = User::updateOrCreate(
+            ['email' => $userData['email']],
+            [
+                'name' => $userData['name'],
+                'slug' => $userData['slug'],
+                'password' => Hash::make('123'),
+            ]
             );
-            $user->assignRole($role);
+            $user->syncRoles($role);
         }
 
         # Buat user tambahan dengan role 'user'
         for ($i = 1; $i <= 2; $i++) {
-            $randomUser = User::firstOrCreate(
-                ['email' => "user{$i}@kuliit.com"],
-                [
-                    'name' => "User {$i}",
-                    'slug' => "user-{$i}",
-                    'password' => Hash::make('123'),
-                ]
+            $randomUser = User::updateOrCreate(
+            ['email' => "user{$i}@halalbeauty.test"],
+            [
+                'name' => "User {$i}",
+                'slug' => "user-{$i}",
+                'password' => Hash::make('123'),
+            ]
             );
-            $randomUser->assignRole('user');
+            $randomUser->syncRoles('user');
         }
     }
 }

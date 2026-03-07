@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Raleway", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Libre Baskerville", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-peach: #FFDAB9;
+  --color-mint: #E0FFF0;
+  --color-charcoal: #333333;
+}
+
+body {
+  @apply bg-[#E0FFF0] text-[#333333] antialiased font-sans;
+}
+
+.article-title {
+  @apply font-sans text-2xl md:text-3xl font-extrabold leading-tight tracking-tight text-[#333333];
+}
+
+.article-excerpt {
+  @apply font-sans text-base text-[#333333]/80 leading-relaxed;
+}
+
+.meta-text {
+  @apply font-sans text-[10px] uppercase tracking-widest font-bold text-[#333333]/60;
+}

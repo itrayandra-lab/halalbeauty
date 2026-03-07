@@ -39,7 +39,7 @@
                                     <label for="web_name">Web Name</label>
                                     <input type="text" name="web_name" class="form-control"
                                         value="{{ old('web_name', $webIdentity->web_name ?? '') }}"
-                                        placeholder="Kuli IT Tecno">
+                                        placeholder="Your Site">
                                     @error('web_name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -49,7 +49,7 @@
                                     <label for="email">Email</label>
                                     <input type="email" name="email" class="form-control"
                                         value="{{ old('email', $webIdentity->email ?? '') }}"
-                                        placeholder="kuliittecno@example.com">
+                                        placeholder="yourname@example.com">
                                     @error('email')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -59,7 +59,7 @@
                                     <label for="domain">Domain</label>
                                     <input type="url" name="domain" class="form-control"
                                         value="{{ old('domain', $webIdentity->domain ?? '') }}"
-                                        placeholder="https://kuliittecno.my.id">
+                                        placeholder="https://yoursite.com">
                                     @error('domain')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -79,7 +79,7 @@
                                     <label for="facebook_link">Facebook Link</label>
                                     <input type="url" name="facebook_link" class="form-control"
                                         value="{{ old('facebook_link', $webIdentity->facebook_link ?? '') }}"
-                                        placeholder="https://www.facebook.com/kuliittecno5">
+                                        placeholder="https://facebook.com/yoursite">
                                     @error('facebook_link')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -118,7 +118,7 @@
                                     <label for="google_maps">Google Maps</label>
                                     <input type="text" name="google_maps" class="form-control"
                                         value="{{ old('google_maps', $webIdentity->google_maps ?? '') }}"
-                                        placeholder="https://maps.google.com/?q=kuliittecno">
+                                        placeholder="https://maps.google.com/?q=yoursite">
                                     @error('google_maps')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -174,7 +174,7 @@
                                     <label for="meta_title">Meta Title</label>
                                     <input type="text" name="meta_title" class="form-control"
                                         value="{{ old('meta_title', $webIdentity->meta_title ?? '') }}"
-                                        placeholder="Selamat Datang di kuliittecno">
+                                        placeholder="Selamat Datang di Your Site">
                                     @error('meta_title')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -184,7 +184,7 @@
                                     <label for="meta_description">Meta Description</label>
                                     <input type="text" name="meta_description" class="form-control"
                                         value="{{ old('meta_description', $webIdentity->meta_description ?? '') }}"
-                                        placeholder="Deskripsi situs kuliittecno">
+                                        placeholder="Deskripsi situs Your Site">
                                     @error('meta_description')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -194,7 +194,7 @@
                                     <label for="meta_keywords">Meta Keywords</label>
                                     <input type="text" name="meta_keywords" class="form-control"
                                         value="{{ old('meta_keywords', $webIdentity->meta_keywords ?? '') }}"
-                                        placeholder="kuliittecno, teknologi, informasi">
+                                        placeholder="keyword1, keyword2, keyword3">
                                     @error('meta_keywords')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

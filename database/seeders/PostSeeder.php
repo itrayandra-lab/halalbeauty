@@ -17,7 +17,7 @@ class PostSeeder extends Seeder
             'Suscipit fugiat fugit voluptatem placeat recusandae.',
             'Pemerintah Resmikan Jalan Tol Baru di Wilayah Barat.',
             'Kebakaran Hebat Hanguskan Pasar Tradisional Semalam.',
-            'Inovasi Teknologi Baru Siap Guncang Dunia Startup.',
+            'Inovasi Kecantikan Baru Siap Guncang Dunia Startup.',
             'Tim Nasional Raih Kemenangan Dramatis di Final.',
             'Harga Bahan Pokok Melonjak Jelang Ramadhan.',
             'Peneliti Temukan Spesies Baru di Hutan Kalimantan.',
@@ -31,7 +31,7 @@ class PostSeeder extends Seeder
             'Pemerintah Siapkan Kebijakan Baru untuk Sektor Pendidikan.',
             'Pasar Modal Menguat, IHSG Ditutup di Zona Hijau.',
             'Kampanye Lingkungan Hidup Galang Ribuan Relawan.',
-            'Perusahaan Teknologi Global Buka Kantor di Indonesia.',
+            'Halal Beauty Global Buka Kantor di Indonesia.',
             'Tren Fashion Musim Ini Dominasi Warna Pastel.',
             'Masyarakat Antusias Sambut Malam Tahun Baru.'
         ];

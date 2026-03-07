@@ -44,13 +44,15 @@
     
     @yield('head')
 
+    {{-- Google Fonts preconnect for performance --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     @vite('resources/css/app.css')
-    @vite('resources/css/styles.css')
     @vite('resources/js/app.js')
 
+    @stack('styles')
 </head>
-{{-- stack ui css --}}
-@stack('styles')
 
 <body>
     <div class="min-h-full">
@@ -58,9 +60,13 @@
         @include('widget.client.header')
         <main>
             @yield('header')
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 ">
+            @hasSection('full-width')
                 @yield('content')
-            </div>
+            @else
+                <div class="mx-auto max-w-12xl">
+                    @yield('content')
+                </div>
+            @endif
         </main>
         @include('widget.client.footer')
     </div>

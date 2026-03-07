@@ -2,10 +2,9 @@
 <header class="w-full bg-white sticky top-0 z-[9999] shadow-sm font-sans"> 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> 
         <div class="flex justify-between items-center h-16">
-
             <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" class="text-3xl font-black italic tracking-tighter text-gray-900 font-serif">
-                    <img src="{{ $meta->logo }}" alt="" width="35">
+                <a href="{{ url('/') }}" class="flex items-center">
+                    <img src="{{ $meta->logo }}" alt="{{ $meta->web_name }}" class="h-10 w-auto">
                 </a>
             </div>
 
