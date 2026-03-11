@@ -48,8 +48,15 @@ class PostsController extends Controller
 
                 ->addColumn('category', fn($post) => $post->category?->name ?? '-')
                 ->addColumn('tags', function ($post) {
-                    if (!$post->tags) return '<span class="text-muted">Tidak ada</span>';
                     $tagIds = $post->tags;
+                    if (!$tagIds) return '<span class="text-muted">Tidak ada</span>';
+                    
+                    // Fallback logic for double-encoded tags (string instead of array)
+                    if (is_string($tagIds)) {
+                        $decoded = json_decode($tagIds, true);
+                        $tagIds = is_array($decoded) ? $decoded : [$tagIds];
+                    }
+
                     if (empty($tagIds)) return '<span class="text-muted">Tidak ada</span>';
 
                     $tagNames = PostTags::whereIn('id', $tagIds)->pluck('name')->take(5)->implode(', ');
@@ -125,7 +132,7 @@ class PostsController extends Controller
                 'content' => $request->content,
                 'image' => $mainImagePath,
                 'category_id' => $request->category_id,
-                'tags' => $request->tags ? json_encode($request->tags) : null,
+                'tags' => $request->tags,
                 'status' => $request->status,
                 'published_at' => $request->published_at,
                 'created_by' => Auth::check() ? Auth::user()->id : 1,
@@ -227,9 +234,9 @@ class PostsController extends Controller
             }
 
             if ($request->has('tags')) {
-                $validatedData['tags'] = json_encode($request->tags);
+                $validatedData['tags'] = $request->tags;
             } else {
-                $validatedData['tags'] = json_encode([]);
+                $validatedData['tags'] = [];
             }
 
             $validatedData['updated_by'] = Auth::check() ? Auth::user()->id : 1;

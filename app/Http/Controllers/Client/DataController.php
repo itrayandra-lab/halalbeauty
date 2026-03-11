@@ -127,21 +127,25 @@ class DataController extends Controller
     {
          $thirtyDaysAgo = Carbon::now()->subDays(30);
          
-         $tags = $post->tags ?? [];
-         
-         return Posts::where('status', 'active')
-             ->whereNotNull('published_at')
-             ->where('published_at', '>=', $thirtyDaysAgo)
-             ->where('published_at', '<=', Carbon::now())
-             ->where('id', '!=', $post->id) 
-             ->where(function ($query) use ($tags, $post) {
-                 if (!empty($tags)) {
-                     foreach ($tags as $tag) {
-                         $query->orWhereJsonContains('tags', $tag);
-                     }
-                 }
-                 $query->orWhere('category_id', $post->category_id);
-             })
+          $tags = $post->tags ?? [];
+          if (is_string($tags)) {
+              $decoded = json_decode($tags, true);
+              $tags = is_array($decoded) ? $decoded : [$tags];
+          }
+          
+          return Posts::where('status', 'active')
+              ->whereNotNull('published_at')
+              ->where('published_at', '>=', $thirtyDaysAgo)
+              ->where('published_at', '<=', Carbon::now())
+              ->where('id', '!=', $post->id) 
+              ->where(function ($query) use ($tags, $post) {
+                  if (!empty($tags) && is_array($tags)) {
+                      foreach ($tags as $tag) {
+                          $query->orWhereJsonContains('tags', $tag);
+                      }
+                  }
+                  $query->orWhere('category_id', $post->category_id);
+              })
              ->inRandomOrder()
              ->limit($limit)
              ->get();
