@@ -27,7 +27,7 @@ class MetaServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             $defaultMeta = [
-                'web_name' => config('app.name', 'Portal Informasi'),
+                'web_name' => config('app.name', 'Raycorp'),
                 'domain' => url('/'),
                 'email' => 'info@example.com',
                 'phone_number' => '#',
@@ -36,11 +36,11 @@ class MetaServiceProvider extends ServiceProvider
                 'youtube_link' => '#',
                 'twitter_link' => '#',
                 'google_maps' => 'https://maps.google.com/',
-                'meta_title' => 'Portal Informasi Halal Beauty',
-                'meta_description' => 'Portal Informasi Halal Beauty - Berita terkini, artikel informatif, dan konten berkualitas.',
-                'meta_keywords' => 'portal, informasi, halal, beauty',
+                'meta_title' => 'Portal Informasi Raycorp',
+                'meta_description' => 'Portal Informasi Raycorp - Berita terkini, artikel informatif, dan konten berkualitas.',
+                'meta_keywords' => 'portal, informasi, raycorp',
                 'og_image' => asset('assets/img/logo.png'),
-                'favicon' => asset('assets/img/logo_2.png'),
+                'favicon' => asset('assets/img/favicon-raycorp.ico'),
                 'logo' => asset('assets/img/logo.png'),
                 'status' => 'active',
                 'version' => '1.0.0',

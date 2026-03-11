@@ -2,7 +2,7 @@
 @section('content')
     <div class="panel-body">
         <h2 class="text-center m-t-0 m-b-30 text-charcoal">
-            <b>Halal Beauty</b>
+            <b>{{ $meta->web_name }}</b>
         </h2>
         <h4 class="text-muted text-center m-t-0">Sign In Portal</h4>
         @include('components.alert-basic')

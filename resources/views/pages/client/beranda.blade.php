@@ -46,7 +46,7 @@
             "name": "Apa yang bisa ditemukan di {{ $meta->web_name ?? 'Portal Berita' }}?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Halal Beauty menyediakan berita terkini, artikel informatif, dan konten berkualitas seputar gaya hidup halal, kecantikan, dan kesehatan."
+                "text": "{{ $meta->web_name ?? 'Raycorp' }} menyediakan berita terkini, artikel informatif, dan konten berkualitas seputar gaya hidup halal, kecantikan, dan kesehatan."
             }
         },
         {
