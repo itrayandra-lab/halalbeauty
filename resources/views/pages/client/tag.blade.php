@@ -149,7 +149,7 @@
                         <span class="text-xs font-mono text-rose-500 uppercase tracking-widest">
                             {{ $item->category->name ?? '—' }}
                         </span>
-                        <a href="/{{ $item->category->slug }}/{{ $item->slug }}" class="group">
+                        <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}" class="group">
                             <h3 class="text-base font-bold text-stone-800 group-hover:text-rose-600 transition-colors leading-snug"
                                 style="font-family:'Libre Baskerville',serif;">
                                 {{ $item->title }}

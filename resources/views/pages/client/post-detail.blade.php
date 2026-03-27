@@ -231,7 +231,7 @@
                                                     <div class="flex-1">
                                                         <div>
                                                             <a class="text-gray-900 font-semibold  text-sm hover:text-gray-600 transition-colors duration-200"
-                                                                href="/{{ $item->category->slug }}/{{ $item->slug }}">
+                                                                href="/{{ $item->category?->slug }}/{{ $item->slug }}">
                                                                 {{ $item->title }}
                                                             </a>
                                                         </div>
@@ -347,7 +347,7 @@
                                 <span class="text-xs font-mono text-rose-400 uppercase tracking-widest">
                                     {{ $item->category->name ?? '—' }}
                                 </span>
-                                <a href="/{{ $item->category->slug }}/{{ $item->slug }}" class="group">
+                                <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}" class="group">
                                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-rose-600 transition-colors leading-snug"
                                         style="font-family:'Libre Baskerville',serif;">
                                         {{ $item->title }}
@@ -385,7 +385,7 @@
                         <span class="text-xs font-mono text-rose-500 uppercase tracking-widest">
                             {{ $item->category->name ?? '—' }}
                         </span>
-                        <a href="/{{ $item->category->slug }}/{{ $item->slug }}" class="group">
+                        <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}" class="group">
                             <h3 class="text-base font-bold text-stone-800 group-hover:text-rose-600 transition-colors leading-snug"
                                 style="font-family:'Libre Baskerville',serif;">
                                 {{ $item->title }}

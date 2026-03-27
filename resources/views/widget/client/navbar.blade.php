@@ -11,7 +11,7 @@
                 <div class="flex items-center text-sm whitespace-nowrap w-full">
                     <span class="text-gray-400 font-bold mr-2 uppercase tracking-wide text-xs hidden sm:inline-block flex-shrink-0">Trending:</span>
                     <span class="font-medium text-gray-200 sm:truncate sm:max-w-md">
-                        @foreach (App\Models\Posts::getTrending(1) as $item)
+                        @foreach (App\Models\Posts::getTrending(1, request()->getHost()) as $item)
                             <a href="/news/{{ $item->slug }}" target="_blank" rel="noopener noreferrer">{{ $item->title }}</a>
                         @endforeach
                     </span>

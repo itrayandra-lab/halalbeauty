@@ -48,6 +48,7 @@ class InterfaceController extends Controller
     public function search(Request $request) {
         $searchQuery = $request->input('qr'); 
         $posts = Posts::where('status', 'active')
+                ->where('domain', request()->getHost())  
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', Carbon::now())
                 ->orderBy('counter', 'desc')
@@ -81,6 +82,7 @@ class InterfaceController extends Controller
         }
 
         $query = Posts::where('category_id', $category->id)
+                    ->where('domain', request()->getHost())  
                     ->whereNotNull('published_at')
                     ->where('status', 'active')
                     ->where('published_at', '<=', Carbon::now())
@@ -116,6 +118,7 @@ class InterfaceController extends Controller
         }
 
         $query = Posts::where('created_by', $author->id)
+                    ->where('domain', request()->getHost())  
                     ->whereNotNull('published_at')
                     ->where('status', 'active')
                     ->where('published_at', '<=', Carbon::now())
@@ -146,6 +149,7 @@ class InterfaceController extends Controller
         $type = $request->query('type', 'terbaru');
         $searchQuery = $request->input('qr'); 
         $posts = Posts::where('status', 'active')
+                ->where('domain', request()->getHost())     
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', Carbon::now())
                 ->with(['category', 'createdBy']); 
@@ -221,6 +225,7 @@ class InterfaceController extends Controller
         }
 
         $query = Posts::where('status', 'active')
+            ->where('domain', request()->getHost())  
             ->whereNotNull('published_at')
             ->where('published_at', '<=', Carbon::now())
             ->whereJsonContains('tags', $tag->id)
@@ -518,6 +523,7 @@ class InterfaceController extends Controller
         $categoryId = $request->query('category_id');
         
         $query = Posts::where('status', 'active')
+                    ->where('domain', request()->getHost())  
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', Carbon::now())
                     ->with(['category', 'createdBy']);

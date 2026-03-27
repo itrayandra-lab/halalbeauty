@@ -22,13 +22,14 @@ class DataController extends Controller
     public static function latestPublished($limit)
     {
         return Posts::where('status', 'active')
+            ->where('domain', request()->getHost())  
             ->whereNotNull('published_at')
             ->where('published_at', '<=', Carbon::now())
             ->latest('published_at')
-            ->limit($limit * 2) // Ambil lebih banyak data untuk dirandom
+            ->limit($limit * 2)
             ->get()
-            ->shuffle() // Randomkan hasil
-            ->take($limit); // Ambil sesuai limit yang diminta
+            ->shuffle()
+            ->take($limit);
     }
 
     /**
@@ -39,6 +40,7 @@ class DataController extends Controller
         $thirtyDaysAgo = Carbon::now()->subDays(30);
 
         return Posts::where('status', 'active')
+            ->where('domain', request()->getHost())  
             ->whereNotNull('published_at')
             ->where('published_at', '>=', $thirtyDaysAgo)
             ->where('published_at', '<=', Carbon::now())
@@ -55,9 +57,10 @@ class DataController extends Controller
         $sixMonthsAgo = Carbon::now()->subMonths(6);
 
         return Posts::where('status', 'active')
+            ->where('domain', request()->getHost())  
             ->whereNotNull('published_at')
             ->where('published_at', '<=', Carbon::now())
-            ->where('created_at', '>=', $sixMonthsAgo) 
+            ->where('created_at', '>=', $sixMonthsAgo)
             ->inRandomOrder()
             ->latest('created_at')
             ->limit($limit)
@@ -72,6 +75,7 @@ class DataController extends Controller
         $thirtyDaysAgo = Carbon::now()->subDays(60);
 
         return Posts::where('status', 'active')
+            ->where('domain', request()->getHost())  
             ->whereNotNull('published_at')
             ->where('published_at', '>=', $thirtyDaysAgo)
             ->where('published_at', '<=', Carbon::now())
@@ -83,7 +87,6 @@ class DataController extends Controller
     /**
      * 5. Video Terbaru yang sudah dipublikasikan dan statusnya active
      */
-
     public static function videos($paginate)
     {
         return Video::latest('created_at')->paginate($paginate);
@@ -92,12 +95,10 @@ class DataController extends Controller
     /**
      * 6. Video Terbaru yang sudah dipublikasikan dan statusnya active
      */
-
     public static function photo($paginate)
     {
         return AlbumPhoto::latest('created_at')->paginate($paginate);
     }
-
 
     /**
      * 7. Mengambil data information terbaru yang sudah dipublikasikan dan berstatus active.
@@ -119,64 +120,62 @@ class DataController extends Controller
         return $query->paginate($paginate);
     }
 
-     /**
-     * 8. rileate posts
+    /**
+     * 8. relate posts
      */
-
     public static function relate($limit, $post)
     {
-         $thirtyDaysAgo = Carbon::now()->subDays(30);
-         
-          $tags = $post->tags ?? [];
-          if (is_string($tags)) {
-              $decoded = json_decode($tags, true);
-              $tags = is_array($decoded) ? $decoded : [$tags];
-          }
-          
-          return Posts::where('status', 'active')
-              ->whereNotNull('published_at')
-              ->where('published_at', '>=', $thirtyDaysAgo)
-              ->where('published_at', '<=', Carbon::now())
-              ->where('id', '!=', $post->id) 
-              ->where(function ($query) use ($tags, $post) {
-                  if (!empty($tags) && is_array($tags)) {
-                      foreach ($tags as $tag) {
-                          $query->orWhereJsonContains('tags', $tag);
-                      }
-                  }
-                  $query->orWhere('category_id', $post->category_id);
-              })
-             ->inRandomOrder()
-             ->limit($limit)
-             ->get();
+        $thirtyDaysAgo = Carbon::now()->subDays(30);
+        
+        $tags = $post->tags ?? [];
+        if (is_string($tags)) {
+            $decoded = json_decode($tags, true);
+            $tags = is_array($decoded) ? $decoded : [$tags];
+        }
+        
+        return Posts::where('status', 'active')
+            ->where('domain', request()->getHost())  
+            ->whereNotNull('published_at')
+            ->where('published_at', '>=', $thirtyDaysAgo)
+            ->where('published_at', '<=', Carbon::now())
+            ->where('id', '!=', $post->id)
+            ->where(function ($query) use ($tags, $post) {
+                if (!empty($tags) && is_array($tags)) {
+                    foreach ($tags as $tag) {
+                        $query->orWhereJsonContains('tags', $tag);
+                    }
+                }
+                $query->orWhere('category_id', $post->category_id);
+            })
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
     }
 
-
-     /**
+    /**
      * 8. category
      */
-
-     public static function category($limit) {
+    public static function category($limit)
+    {
         return PostCategory::latest()->inRandomOrder()
-        ->limit($limit)
-        ->get();
-     }
+            ->limit($limit)
+            ->get();
+    }
 
-     /**
+    /**
      * 8. tags
      */
-
-     public static function tags($limit) {
+    public static function tags($limit)
+    {
         return PostTags::latest()
-        ->limit($limit)
-        ->inRandomOrder()
-        ->get();
-     }
+            ->limit($limit)
+            ->inRandomOrder()
+            ->get();
+    }
 
-     /**
+    /**
      * 9. ads
      */
-
     public static function ads($limit, $type = null)
     {
         $query = Ad::where('is_active', true)->inRandomOrder();
@@ -191,5 +190,4 @@ class DataController extends Controller
 
         return $query->limit($limit)->get();
     }
-
 }

@@ -12,7 +12,7 @@
                             <div class="flex-1">
                                 <div>
                                     <a class="text-gray-900 font-bold lg:text-lg text-sm hover:text-gray-600 transition-colors duration-200"
-                                        href="/{{ $item->category->slug }}/{{ $item->slug }}">
+                                        href="/{{ $item->category?->slug }}/{{ $item?->slug }}">
                                         {{ $item->title }}
                                     </a>
                                 </div>

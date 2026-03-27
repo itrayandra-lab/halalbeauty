@@ -22,6 +22,7 @@ class Posts extends Model
         'created_by',
         'category_id',
         'tags',
+        'domain',        // ← BARU: tambahkan ini
         'source',
         'meta_data',
         'updated_by',
@@ -69,13 +70,30 @@ class Posts extends Model
         return $this->belongsTo(PostCategory::class, 'category_id');
     }
 
-    public static function getTrending($limit)
+    // ========== TAMBAHAN METHOD BARU ==========
+    /**
+     * Scope untuk filter berdasarkan domain
+     */
+    public function scopeForDomain($query, $domain = null)
     {
-        $posts = self::select('title', 'image', 'slug', 'counter')
+        if (!$domain) {
+            $domain = request()->getHost();
+        }
+        
+        return $query->where('domain', $domain);
+    }
+
+    public static function getTrending($limit, $domain = null)  
+    {
+        $query = self::select('title', 'image', 'slug', 'counter', 'domain')  
             ->where('status', 'active')
             ->whereNotNull('published_at')
-            ->where('published_at', '<=', Carbon::now())
-            ->inRandomOrder()   
+            ->where('published_at', '<=', Carbon::now());
+        if ($domain) {
+            $query->where('domain', $domain);
+        }
+        
+        $posts = $query->inRandomOrder()   
             ->limit($limit)      
             ->get()
             ->sortByDesc('counter') 
@@ -83,5 +101,4 @@ class Posts extends Model
 
         return $posts;
     }
-
 }

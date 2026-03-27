@@ -121,7 +121,7 @@
                             </div>
                             <div class="flex-1 space-y-6">
                                 <span class="text-blue-600 font-semibold lg:hidden">
-                                    <a href="/{{ $item->category->slug }}"
+                                    <a href="/{{ $item->category?->slug }}"
                                         class="relative z-10 inline-flex items-center p-1 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors duration-200 group">
                                         <span
                                             class="flex items-center justify-center w-3 h-3 mr-2 text-white bg-blue-600 rounded-full">
@@ -134,7 +134,7 @@
                                                 <line x1="16" x2="14" y1="3" y2="21" />
                                             </svg>
                                         </span>
-                                        <span class="mr-2">{{ $item->category->name }}</span>
+                                        <span class="mr-2">{{ $item->category?->name }}</span>
                                         <svg class="w-3 h-3 ml-auto text-gray-400 group-hover:text-gray-600" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -144,7 +144,7 @@
                                 </span>
                                 <br class="lg:hidden">
                                 <a class="text-gray-700 font-semibold lg:text-lg text-xs hover:text-gray-600 transition-colors duration-200"
-                                    href="/{{ $item->category->slug }}/{{ $item->slug }}">
+                                    href="/{{ $item->category?->slug }}/{{ $item?->slug }}">
                                     {{ $item->title }}
                                 </a>
                                 <div class="lg:space-y-5">
@@ -171,7 +171,7 @@
                                             </div>
                                         </div>
                                         <span class="text-blue-600 font-semibold hidden lg:block">
-                                            <a href="/{{ $item->category->slug }}"
+                                            <a href="/{{ $item->category?->slug }}"
                                                 class="relative z-10 inline-flex items-center p-1 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors duration-200 group">
                                                 <span
                                                     class="flex items-center justify-center w-3 h-3 mr-2 text-white bg-blue-600 rounded-full">
@@ -189,7 +189,7 @@
                                                             y2="21" />
                                                     </svg>
                                                 </span>
-                                                <span class="mr-2">{{ $item->category->name }}</span>
+                                                <span class="mr-2">{{ $item->category?->name }}</span>
                                                 <svg class="w-3 h-3 ml-auto text-gray-400 group-hover:text-gray-600"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                     xmlns="http://www.w3.org/2000/svg">

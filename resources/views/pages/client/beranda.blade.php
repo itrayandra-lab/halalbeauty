@@ -153,7 +153,7 @@
                 <span class="text-xs font-mono font-bold uppercase tracking-widest text-rose-500">
                     {{ $artFeatured->category->name ?? '—' }}
                 </span>
-                <a href="/{{ $artFeatured->category->slug }}/{{ $artFeatured->slug }}" class="group">
+                <a href="/{{ $artFeatured->category?->slug }}/{{ $artFeatured->slug }}" class="group">
                     <h1 class="text-3xl lg:text-4xl font-bold leading-tight text-gray-900 group-hover:text-rose-600 transition-colors"
                         style="font-family:'Libre Baskerville',serif;">
                         {{ $artFeatured->title }}
@@ -162,7 +162,7 @@
                 <p class="text-base italic text-gray-600 leading-relaxed" style="font-family:'Libre Baskerville',serif;">
                     {{ implode(' ', array_slice(explode(' ', strip_tags($artFeatured->content ?? '')), 0, 25)) }}...
                 </p>
-                <a href="/{{ $artFeatured->category->slug }}/{{ $artFeatured->slug }}"
+                <a href="/{{ $artFeatured->category?->slug }}/{{ $artFeatured->slug }}"
                    class="self-start text-xs font-mono font-bold uppercase tracking-widest text-gray-700 underline underline-offset-4 decoration-rose-400 hover:text-rose-600 transition-colors">
                     Baca Selengkapnya →
                 </a>
@@ -184,7 +184,7 @@
                         <span class="text-xs font-mono text-rose-400 uppercase tracking-widest">
                             {{ $item->category->name ?? '—' }}
                         </span>
-                        <a href="/{{ $item->category->slug }}/{{ $item->slug }}" class="group">
+                        <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}" class="group">
                             <h3 class="text-lg font-bold text-gray-900 group-hover:text-rose-600 transition-colors leading-snug"
                                 style="font-family:'Libre Baskerville',serif;">
                                 {{ $item->title }}
@@ -228,7 +228,7 @@
                     <span class="text-xs font-mono text-rose-500 uppercase tracking-widest">
                         {{ $item->category->name ?? '—' }}
                     </span>
-                    <a href="/{{ $item->category->slug }}/{{ $item->slug }}" class="group">
+                    <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}" class="group">
                         <h3 class="text-base font-bold text-stone-800 group-hover:text-rose-600 transition-colors leading-snug"
                             style="font-family:'Libre Baskerville',serif;">
                             {{ $item->title }}
@@ -282,7 +282,7 @@
 
                 {{-- Right: Title + Excerpt + Link (Aligned Left) --}}
                 <div class="flex flex-col gap-4 lg:pr-10">
-                    <a href="/{{ $item->category->slug }}/{{ $item->slug }}" class="group">
+                    <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}" class="group">
                         <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-rose-600 transition-colors leading-snug"
                             style="font-family:'Libre Baskerville',serif;">
                             {{ $item->title }}
@@ -291,7 +291,7 @@
                     <p class="text-sm text-gray-500 leading-relaxed max-w-2xl">
                         {{ implode(' ', array_slice(explode(' ', strip_tags($item->content ?? '')), 0, 22)) }}...
                     </p>
-                    <a href="/{{ $item->category->slug }}/{{ $item->slug }}"
+                    <a href="/{{ $item->category?->slug }}/{{ $item?->slug }}"
                        class="self-start text-xs font-mono uppercase tracking-[0.15em] text-gray-700 hover:text-rose-600 transition-colors flex items-center gap-2 mt-1">
                         Baca Selengkapnya <span>→</span>
                     </a>

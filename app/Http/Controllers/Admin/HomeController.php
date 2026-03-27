@@ -15,10 +15,12 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $currentDomain = request()->getHost();  
+
         $totalUsers = User::count();
-        $totalNews = Posts::count();
-        $newsThisYear = Posts::whereYear('created_at', date('Y'))->count();
-        $newsToday = Posts::whereDate('created_at', date('Y-m-d'))->count();
+        $totalNews = Posts::where('domain', $currentDomain)->count();  
+        $newsThisYear = Posts::where('domain', $currentDomain)->whereYear('created_at', date('Y'))->count();  // ← TAMBAHAN filter domain
+        $newsToday = Posts::where('domain', $currentDomain)->whereDate('created_at', date('Y-m-d'))->count();  // ← TAMBAHAN filter domain
     
         return view('pages.admin.home.index', [
             'totalUsers' => $totalUsers,

@@ -22,7 +22,12 @@ class PostsController extends Controller
    public function index(Request $request)
     {
         if ($request->ajax()) {
+            // ========== TAMBAHAN BARIS 1 & 2 ==========
+            $currentDomain = $request->get('current_domain', request()->getHost());
+            
             $posts = Posts::with(['category', 'createdBy', 'updatedBy'])
+                ->where('domain', $currentDomain)  // ← BARU: filter by domain
+                // ==========================================
                 ->select('posts.*')
                 ->latest();
 
@@ -121,6 +126,8 @@ class PostsController extends Controller
         ]);
 
         try {
+            $currentDomain = $request->get('current_domain', request()->getHost());
+            
             $mainImagePath = null;
             if ($request->hasFile('featured_image')) {
                 $mainImagePath = FileHelper::saveFile($request->file('featured_image'), 'posts', Str::slug($request->title) . '-' . time());
@@ -137,6 +144,7 @@ class PostsController extends Controller
                 'published_at' => $request->published_at,
                 'created_by' => Auth::check() ? Auth::user()->id : 1,
                 'counter' => 0,
+                'domain' => $currentDomain,  
             ]);
 
             Log::info("Post berhasil disimpan ke database dengan ID: {$post->id}");
